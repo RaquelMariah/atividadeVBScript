@@ -7,9 +7,11 @@ dim sorteioNumero(10) 'vetor para 10 numeros
 dim sorteioOperador(3) 'vetor para tres operações
 dim resultado 			'variavel para resultado das operacoes
 dim resposta 			'variavel para armazenar resultado da operaco e exibir no front
-dim perguntaOperacao	'variavel para armazenar o tipo de operacao e exibir no front
+
 dim simboloOperacao		'variavel para armazenar o simbolo da operacao e exibir no front
 dim scase
+dim acertos				'variavel para armazenar numero de acertos do usuário
+dim resp 
 
 call sorteio1() '-------------------SORTEIO DOS NUMEROS
 
@@ -51,66 +53,80 @@ for i=1 to 3 step 0
 	sorteioOperador(2)="SUBTRAÇÃO"
 	sorteioOperador(3)="MULTIPLICAÇÃO"
 	randomize(second(time))
-	o=int(rnd*4)+1
+	o=int(rnd*3)+1
 '	msgbox(sorteioOperador(o))
 	i = i + 1
 next	
+if 	sorteioOperador(o) = sorteioOperador(1) then '----------------------------ADIÇÃO
+	call operacaoSoma()
+	resposta = resultado
+	
+elseif sorteioOperador(o) = sorteioOperador(2) then '-------------------------SUBTRAÇÃO
+	call operacaoSubtracao()
+	resposta = resultado
+	
+else 												 '-------------------------MULTIPLICAÇÃO
+	call operacaoMultiplicacao()
+	resposta = resultado
+	
+end if
 call input1
 end sub
 '-------------------------------------------------------OPERACOES
 sub operacaoSoma()
 	resultado = num1 + num2
 	simboloOperacao = " + "
-	msgbox(resultado)
+
 end sub
 
 sub operacaoSubtracao()
 	resultado = num1 - num2
 	simboloOperacao = " - "
-	msgbox(resultado)
+
 end sub
 
 sub operacaoMultiplicacao()
 	resultado = num1 * num2
 	simboloOperacao = " * "
-	msgbox(resultado)
+
 end sub
 '-------------------------------------------------------OPERACOES
 
 sub acertou()
-	msgbox("Parabéns! Acertou!!!")
+	MsgBox("Parabéns você acertou!" + vbNewLine & _
+	"Qtde de acertos: " + ""& acertos &"")
+	call sorteio1()
+	
 end sub
 
 sub errou()
-	msgbox("Errou! Fim do jogo")
+
+resp=msgbox("Deseja jogar novamente?", vbQuestion + vbYesNo, "ATENÇÃO")
+	if resp = vbYes then
+		call input1()
+	else
+		wscript.quit
+	end if
+	
 end sub
 
 
 sub input1()
-if 	sorteioOperador(o) = sorteioOperador(1) then '----------------------------ADIÇÃO
-	call operacaoSoma()
-	resposta = resultado
-	perguntaOperacao = sorteioOperador(1)
-elseif sorteioOperador(o) = sorteioOperador(2) then '-------------------------SUBTRAÇÃO
-	call operacaoSubtracao()
-	resposta = resultado
-	perguntaOperacao = sorteioOperador(2)
-else 												 '-------------------------MULTIPLICAÇÃO
-	call operacaoMultiplicacao()
-	resposta = resultado
-	perguntaOperacao = sorteioOperador(3)
-end if
-scase=(inputbox("=================================" + vbNewLine & _
+
+scase=(cint(inputbox("=================================" + vbNewLine & _
 "ACERTE O CALCULO MATEMÁTICO" + vbNewLine & _
 "=================================" + vbNewLine & _
 "	RESOLVA: " + ""& num1 &"" + ""& simboloOperacao&"" +  ""& num2 &"" + " = " + vbNewLine & _ 
-"=================================", "SISTEMAS DE INFORMAÇÃO - P1") + vbokonly)
+"=================================", "SISTEMAS DE INFORMAÇÃO - P1")))
 if scase = resposta then
+	acertos = acertos + 1
 	call acertou()
-elseif scase <> resposta then
-	call errou()
+elseif scase = "" then
+	msgbox("Opção inválida!")
+	call input1
 else
-	msgbox("Opção Inválida!")
+	msgbox("Você errou!")
+	call errou()
 end if
 end sub
 
